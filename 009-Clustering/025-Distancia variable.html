@@ -1,0 +1,99 @@
+<html>
+    <head>
+        <style>
+            canvas{border-left:1px solid grey;border-bottom:1px solid grey;}
+        </style>
+    </head>
+    <body>
+        <canvas id="lienzo" width=512 height=512></canvas>
+        <script>
+            function calculaDistancia(x1,y1,x2,y2){
+                var a = x1 - x2;
+                var b = y1 - y2;
+                var c = Math.sqrt( a*a + b*b );
+                return c;
+            }
+            function anguloEntrePuntos(x1, y1, x2, y2) {
+                const deltaX = x2 - x1;
+                const deltaY = y2 - y1;
+                const anguloEnRadianes = Math.atan2(deltaY, deltaX);
+                const anguloEnGrados = anguloEnRadianes * (180 / Math.PI);
+                return anguloEnRadianes;
+            }
+            class Punto{
+                constructor(mix,miy){
+                    this.x = mix
+                    this.y = miy
+                }
+            }
+            var multiplicador = 5
+            var numeropuntos = 1000;
+            var arraypuntos = [];
+            fetch("datos.json")
+              .then(response => {
+                return response.json();
+              })
+              .then(data => {
+                arraypuntos = data
+                for(let i = 0;i<arraypuntos.length;i++){
+                    arraypuntos[i].x *= multiplicador
+                }
+                console.log(arraypuntos)
+              })
+
+            var contexto = document.getElementById("lienzo").getContext("2d")
+            contexto.strokeStyle = "grey"
+            var temporizador = setTimeout("dibuja()",1000)
+            function dibuja(){
+                contexto.clearRect(0,0,512,512)
+                for(let i = 0;i<numeropuntos;i++){
+                    for(let j = 0;j<numeropuntos;j++){
+                        if(i != j){
+                            if(calculaDistancia(
+                                arraypuntos[i].x,
+                                arraypuntos[i].y,
+                                arraypuntos[j].x,
+                                arraypuntos[j].y
+                            ) < Math.random()*50){
+                                contexto.beginPath()
+                                contexto.moveTo(arraypuntos[i].x,
+                                arraypuntos[i].y)
+                                contexto.lineTo(arraypuntos[j].x,
+                                arraypuntos[j].y)
+                                contexto.stroke()
+                                // Ahora acerco los puntos
+                                let angulo = anguloEntrePuntos(
+                                    arraypuntos[i].x,
+                                    arraypuntos[i].y,
+                                    arraypuntos[j].x,
+                                    arraypuntos[j].y)
+                                arraypuntos[i].x += Math.cos(angulo)/100
+                                arraypuntos[i].y += Math.sin(angulo)/100
+                                arraypuntos[j].x -= Math.cos(angulo)/100
+                                arraypuntos[j].y -= Math.sin(angulo)/100
+                            }
+                        }
+                    }
+                }
+                for(let i = 0;i<numeropuntos;i++){
+                    contexto.fillText(
+                        Math.round(arraypuntos[i].x/multiplicador),
+                        arraypuntos[i].x+5,
+                        arraypuntos[i].y+15
+                    )
+                    contexto.beginPath()
+                    contexto.arc(
+                        arraypuntos[i].x,
+                        arraypuntos[i].y,
+                        5,
+                        0,Math.PI*2)
+                    contexto.fill()
+                    
+                }
+                clearTimeout(temporizador)
+                temporizador = setTimeout("dibuja()",1)
+            }
+            
+        </script>
+    </body>
+</html>

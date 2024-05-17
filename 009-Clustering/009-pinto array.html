@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <style>
+            canvas{border-left:1px solid grey;border-bottom:1px solid grey;}
+        </style>
+    </head>
+    <body>
+        <canvas id="lienzo" width=512 height=512></canvas>
+        <script>
+            class Punto{
+                constructor(mix,miy){
+                    this.x = mix
+                    this.y = miy
+                }
+            }
+            var numeropuntos = 500;
+            var arraypuntos = [];
+            for(let i = 0;i<numeropuntos;i++){
+                arraypuntos[i] = new Punto(
+                    Math.random()*512,
+                    Math.random()*512
+                )
+            }
+            var contexto = document.getElementById("lienzo").getContext("2d")
+            for(let i = 0;i<numeropuntos;i++){
+                contexto.fillRect(
+                    arraypuntos[i].x,
+                    arraypuntos[i].y,
+                    2,
+                    2)
+            }
+            
+        </script>
+    </body>
+</html>

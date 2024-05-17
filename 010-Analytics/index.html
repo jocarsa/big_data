@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            *{text-align:center;}
+        </style>
+        <script
+          src="https://code.jquery.com/jquery-3.7.1.js"
+          integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+          crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <h1>Analyticas</h1>
+        <p>Selecciona una cuenta</p>
+        <select id="cuenta">
+            <option value="jocarsa">jocarsa</option>
+            <option value="josevicente">josevicente</option>
+            <option value="claque">claque</option>
+        </select>
+        <div id="contenido">
+            
+        </div>
+        <script>
+            $(document).ready(function(){
+                $("#cuenta").change(function(){
+                    $.ajax({
+                    url: '009-Llamada a tercer procedimiento.php?pagina='+$(this).val(), 
+                    method: 'GET', 
+                    beforeSend: function() {
+                        $('#contenido').html('<img src="loading.gif">');
+                    },
+                    success: function(data) {
+                        $('#contenido').html(data);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        if (textStatus === 'timeout') {
+                            console.log("tiempo agotado")
+                        } else {
+                            console.error("algun error ha ocurrido");
+                        }
+                    },
+                    timeout: 5000 
+                });
+                })
+            })
+        </script>
+    </body>
+</html>
